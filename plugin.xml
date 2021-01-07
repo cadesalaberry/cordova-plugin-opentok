@@ -10,7 +10,7 @@
     <keywords>opentok,tokbox</keywords>
 
     <js-module src="www/opentok.js" name="opentok">
-      <clobbers target="OT" />
+      <runs />
     </js-module>
 
     <platform name="android">
