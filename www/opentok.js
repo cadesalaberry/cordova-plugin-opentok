@@ -1,4 +1,3 @@
-console.log('injecting plugin Opentok');
 
 window.OT = {
   checkSystemRequirements: function() {
@@ -3776,4 +3775,4 @@ OTHelpers.centerElement = function(element, width, height) {
 
 })(window, window.OTHelpers);
 
-module.exports = window.OT;
+// module.exports = window.OT;
