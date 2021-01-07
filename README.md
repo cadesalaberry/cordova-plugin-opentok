@@ -36,7 +36,8 @@ cordova plugin remove com.tokbox.cordova.opentok
 
 All your editing will be done in your www folder.
 
-To use the opentok library, make sure you include `opentok.js` file in your HTML document.
+~~To use the opentok library, make sure you include `opentok.js` file in your HTML document.~~
+The `opentok.js` file is now automatically included by cordova.
 
 ```HTML
 <script type="text/javascript" charset="utf-8" src="opentok.js"></script>
