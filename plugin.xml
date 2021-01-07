@@ -9,8 +9,8 @@
     <license>Apache 2.0</license>
     <keywords>opentok,tokbox</keywords>
 
-    <js-module src="www/opentok.js" name="opentok">
-      <!-- <merges target="OT" /> -->
+    <js-module src="node_modules/@opentok/client/dist/js/opentok.min.js" name="opentok">
+      <clobbers target="OT" />
     </js-module>
 
     <platform name="android">
@@ -38,8 +38,8 @@
           <param name="android-package" value="com.tokbox.cordova.OpenTokAndroidPlugin"/>
           <param name="onload" value="true" />
         </feature>
-      </config-file>  
-      
+      </config-file>
+
     </platform>
 
     <!-- ios -->
