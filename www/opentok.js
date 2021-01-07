@@ -1,5 +1,8 @@
 
 window.OT = {
+  banana: function() {
+    return 'banana';
+  },
   checkSystemRequirements: function() {
     return 1;
   },
