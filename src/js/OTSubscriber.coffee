@@ -2,7 +2,7 @@
 #   Properties:
 #     id (string) - dom id of the subscriber
 #     stream (Stream) - stream to which you are subscribing
-#   Methods: 
+#   Methods:
 #     getAudioVolume()
 #     getImgData(callback)
 #     getStyle() : Objects
@@ -79,10 +79,10 @@ class TBSubscriber
     obj = replaceWithVideoStream(@element, stream.streamId, {width:width, height:height, insertMode:insertMode})
     position = getPosition(@element)
     ratios = TBGetScreenRatios()
-    OT.getHelper().eventing(@)
+    cordovaOT.getHelper().eventing(@)
     Cordova.exec(TBSuccess, TBError, OTPlugin, "subscribe", [stream.streamId, position.top, position.left, width, height, zIndex, subscribeToAudio, subscribeToVideo, ratios.widthRatio, ratios.heightRatio] )
     Cordova.exec(@eventReceived, TBSuccess, OTPlugin, "addEvent", ["subscriberEvents"] )
-    OT.updateViews()
+    cordovaOT.updateViews()
   eventReceived: (response) =>
     @[response.eventType](response.data)
   connected: (event) =>

@@ -1,8 +1,8 @@
 # TB Object:
-#   Methods: 
+#   Methods:
 #     TB.checkSystemRequirements() :number
 #     TB.initPublisher( apiKey:String [, replaceElementId:String] [, properties:Object] ):Publisher
-#     TB.initSession( apiKey, sessionId ):Session 
+#     TB.initSession( apiKey, sessionId ):Session
 #     TB.log( message )
 #     TB.off( type:String, listener:Function )
 #     TB.on( type:String, listener:Function )
@@ -10,13 +10,13 @@
 #     TB.setLogLevel(logLevel:String)
 #     TB.upgradeSystemRequirements()
 
-window.OT =
+window.cordovaOT =
   checkSystemRequirements: ->
     return 1
   initPublisher: (one, two) ->
     return new TBPublisher( one, two )
   initSession: (apiKey, sessionId ) ->
-    if( not sessionId? ) then @showError( "OT.initSession takes 2 parameters, your API Key and Session ID" )
+    if( not sessionId? ) then @showError( "cordovaOT.initSession takes 2 parameters, your API Key and Session ID" )
     return new TBSession(apiKey, sessionId)
   log: (message) ->
     pdebug "TB LOG", message
@@ -51,10 +51,10 @@ window.OT =
   removeEventListener: (type, handler ) ->
     @off( type, handler )
 
-window.TB = OT
+window.cordovaTB = cordovaOT
 window.addEventListener "orientationchange", (->
   setTimeout (->
-    OT.updateViews()
+    cordovaOT.updateViews()
     return
   ), 1000
   return

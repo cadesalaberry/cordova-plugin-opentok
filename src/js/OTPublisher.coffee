@@ -4,7 +4,7 @@
 #     stream - The Stream object corresponding to the stream of the publisher
 #     session (Session) — The Session to which the Publisher is publishing a stream. If the Publisher is not publishing a stream to a Session, this property is set to null.
 #     replaceElementId (String) — The ID of the DOM element that was replaced when the Publisher video stream was inserted.
-#   Methods: 
+#   Methods:
 #     destroy():Publisher - not yet implemented
 #     getImgData(callback)
 #     getStyle() : Object - not yet implemented
@@ -60,7 +60,7 @@ class TBPublisher
     replaceWithVideoStream(@pubElement, PublisherStreamId, {width:width, height:height, insertMode:insertMode})
     position = getPosition(@pubElement)
     TBUpdateObjects()
-    OT.getHelper().eventing(@)
+    cordovaOT.getHelper().eventing(@)
     Cordova.exec(TBSuccess, TBError, OTPlugin, "initPublisher", [name, position.top, position.left, width, height, zIndex, publishAudio, publishVideo, cameraName, ratios.widthRatio, ratios.heightRatio, audioFallbackEnabled, audioBitrate, audioSource, videoSource, frameRate, resolution] )
     Cordova.exec(@eventReceived, TBSuccess, OTPlugin, "addEvent", ["publisherEvents"] )
   setSession: (session) =>
@@ -111,7 +111,7 @@ class TBPublisher
     streamEvent = new TBEvent("audioLevelUpdated")
     streamEvent.audioLevel = event.audioLevel
     @dispatchEvent(streamEvent)
-    return @ 
+    return @
 
   publishMedia: (media, state) ->
     if media not in ["publishAudio", "publishVideo"] then return

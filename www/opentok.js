@@ -1,4 +1,4 @@
-window.OT = {
+window.cordovaOT = {
   checkSystemRequirements: function() {
     return 1;
   },
@@ -7,7 +7,7 @@ window.OT = {
   },
   initSession: function(apiKey, sessionId) {
     if (sessionId == null) {
-      this.showError("OT.initSession takes 2 parameters, your API Key and Session ID");
+      this.showError("cordovaOT.initSession takes 2 parameters, your API Key and Session ID");
     }
     return new TBSession(apiKey, sessionId);
   },
@@ -50,11 +50,11 @@ window.OT = {
   }
 };
 
-window.TB = OT;
+window.cordovaTB = cordovaOT;
 
 window.addEventListener("orientationchange", (function() {
   setTimeout((function() {
-    OT.updateViews();
+    cordovaOT.updateViews();
   }), 1000);
 }), false);
 
@@ -383,7 +383,7 @@ TBPublisher = (function() {
     });
     position = getPosition(this.pubElement);
     TBUpdateObjects();
-    OT.getHelper().eventing(this);
+    cordovaOT.getHelper().eventing(this);
     Cordova.exec(TBSuccess, TBError, OTPlugin, "initPublisher", [name, position.top, position.left, width, height, zIndex, publishAudio, publishVideo, cameraName, ratios.widthRatio, ratios.heightRatio, audioFallbackEnabled, audioBitrate, audioSource, videoSource, frameRate, resolution]);
     Cordova.exec(this.eventReceived, TBSuccess, OTPlugin, "addEvent", ["publisherEvents"]);
   }
@@ -597,7 +597,7 @@ TBSession = (function() {
     if (typeof arguments[0] === "object") {
       this.publisher = arguments[0];
     } else {
-      this.publisher = OT.initPublisher(arguments);
+      this.publisher = cordovaOT.initPublisher(arguments);
     }
     this.publisher.setSession(this);
     Cordova.exec(TBSuccess, OTPublisherError, OTPlugin, "publish", []);
@@ -721,7 +721,7 @@ TBSession = (function() {
     this.streams = {};
     this.subscribers = {};
     this.alreadyPublishing = false;
-    OT.getHelper().eventing(this);
+    cordovaOT.getHelper().eventing(this);
     Cordova.exec(TBSuccess, TBSuccess, OTPlugin, "initSession", [this.apiKey, this.sessionId]);
   }
 
@@ -1060,10 +1060,10 @@ TBSubscriber = (function() {
     });
     position = getPosition(this.element);
     ratios = TBGetScreenRatios();
-    OT.getHelper().eventing(this);
+    cordovaOT.getHelper().eventing(this);
     Cordova.exec(TBSuccess, TBError, OTPlugin, "subscribe", [stream.streamId, position.top, position.left, width, height, zIndex, subscribeToAudio, subscribeToVideo, ratios.widthRatio, ratios.heightRatio]);
     Cordova.exec(this.eventReceived, TBSuccess, OTPlugin, "addEvent", ["subscriberEvents"]);
-    OT.updateViews();
+    cordovaOT.updateViews();
   }
 
   TBSubscriber.prototype.eventReceived = function(response) {
