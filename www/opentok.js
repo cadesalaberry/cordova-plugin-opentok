@@ -14,6 +14,26 @@ window.cordovaOT = {
   log: function(message) {
     return pdebug("TB LOG", message);
   },
+  getDevices: function() {
+    return [
+      {
+        deviceId: "FAKEDEVICEID779BA001D1B7A638EB320103F0EF",
+        kind: "audioinput",
+        label: "iPad Micro",
+        groupId: ""
+      }, {
+        deviceId: "FAKEDEVICEID08BADAB2A7D7EB3FEDB0BA373C06",
+        kind: "videoinput",
+        label: "Front Camera",
+        groupId: ""
+      }, {
+        deviceId: "FAKEDEVICEID82EF36372A93FBCFB2CEB8900CEB",
+        kind: "videoinput",
+        label: "Back Camera",
+        groupId: ""
+      }
+    ];
+  },
   off: function(event, handler) {},
   on: function(event, handler) {
     if (event === "exception") {
