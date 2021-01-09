@@ -256,6 +256,7 @@ class TBSession
       callbackFunc()
       return
   signalReceived: (event) =>
+    console.log("JS: signalReceived", event)
     streamEvent = new TBEvent("signal")
     streamEvent.data = event.data
     streamEvent.from = @connections[event.connectionId]
