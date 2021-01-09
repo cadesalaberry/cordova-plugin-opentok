@@ -295,7 +295,7 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
         public void onStreamCreated(PublisherKit arg0, Stream arg1) {
             Log.i(TAG, "publisher stream received");
             streamCollection.put(arg1.getStreamId(), arg1);
-
+            
             streamHasAudio.put(arg1.getStreamId(), arg1.hasAudio());
             streamHasVideo.put(arg1.getStreamId(), arg1.hasVideo());
             JSONObject videoDimensions = new JSONObject();
@@ -906,7 +906,7 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
     @Override
     public void onStreamVideoDimensionsChanged(Session session, Stream stream, int width, int height) {
         JSONObject oldValue = this.streamVideoDimensions.get(stream.getStreamId());
-
+        
         JSONObject newValue = new JSONObject();
         try {
             newValue.put("width", width);
@@ -989,11 +989,11 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
                     params.put("partner_id", apiKey);
                     params.put("payload", payload.toString());
                     params.put("source", "https://github.com/opentok/cordova-plugin-opentok");
-                    params.put("build", "2.18.1");
+                    params.put("build", "2.15.3");
                     params.put("session_id", sessionId);
                     if (connectionId != null) {
                         params.put("action", "cp_on_connect");
-                        params.put("connectionId", connectionId);
+                        params.put("connectionId", connectionId);                
                     } else {
                         params.put("action", "cp_initialize");
                     }
