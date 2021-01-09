@@ -34,6 +34,45 @@ window.cordovaOT = {
       }
     ];
   },
+  getUserMedia: function() {
+    return Promise.resolve({
+      getVideoTracks: function() {
+        return [
+          {
+            name: 'Fake video track',
+            stop: function() {
+              return true;
+            }
+          }
+        ];
+      },
+      getAudioTracks: function() {
+        return [
+          {
+            name: 'Fake audio track',
+            stop: function() {
+              return true;
+            }
+          }
+        ];
+      },
+      getTracks: function() {
+        return [
+          {
+            name: 'Fake audio track',
+            stop: function() {
+              return true;
+            }
+          }, {
+            name: 'Fake video track',
+            stop: function() {
+              return true;
+            }
+          }
+        ];
+      }
+    });
+  },
   off: function(event, handler) {},
   on: function(event, handler) {
     if (event === "exception") {

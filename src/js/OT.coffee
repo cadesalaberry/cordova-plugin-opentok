@@ -25,6 +25,14 @@ window.cordovaOT =
     { deviceId: "FAKEDEVICEID08BADAB2A7D7EB3FEDB0BA373C06", kind: "videoinput", label: "Front Camera", groupId: "" },
     { deviceId: "FAKEDEVICEID82EF36372A93FBCFB2CEB8900CEB", kind: "videoinput", label: "Back Camera", groupId: "" },
   ]
+  getUserMedia: -> Promise.resolve({
+    getVideoTracks: -> [{ name: 'Fake video track', stop: -> true }],
+    getAudioTracks: -> [{ name: 'Fake audio track', stop: -> true }],
+    getTracks: -> [
+      { name: 'Fake audio track', stop: -> true },
+      { name: 'Fake video track', stop: -> true },
+    ],
+  }) # accept the devices permissions
   off: (event, handler) ->
     #todo
   on: (event, handler) ->
