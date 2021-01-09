@@ -677,7 +677,7 @@
 }
 -(void) session:(OTSession *)session receivedSignalType:(NSString *)type fromConnection:(OTConnection *)connection withString:(NSString *)string{
 
-    NSLog(@"iOS Session Received signal from Connection: %@ with id %@", connection, [connection connectionId]);
+    NSLog(@"iOS Session Received signal of type %@ from Connection: %@ with id %@", type, connection, [connection connectionId]);
     NSMutableDictionary* data = [[NSMutableDictionary alloc] init];
     [data setObject: (type == nil) ? @ "" : type forKey: @"type"];
     [data setObject: (string == nil) ? @"" : string forKey: @"data"];
