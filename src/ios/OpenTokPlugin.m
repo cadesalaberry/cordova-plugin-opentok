@@ -57,7 +57,7 @@
     [payload setObject:@"3.4.3" forKey:@"cp_version"];
     NSMutableDictionary *logData = [[NSMutableDictionary alloc]init];
     [logData setObject:apiKey forKey:@"partner_id"];
-    [logData setObject:@"2.15.3" forKey:@"build"];
+    [logData setObject:@"2.18.1" forKey:@"build"];
     [logData setObject:@"https://github.com/opentok/cordova-plugin-opentok" forKey:@"source"];
     [logData setObject:@"info" forKey:@"payload_type"];
     [logData setObject:payload forKey:@"payload"];
@@ -240,7 +240,7 @@
     NSString *encodedString = [imageData base64EncodedStringWithOptions:0 ];
     return [NSString stringWithFormat:@"data:image/png;base64,%@",encodedString];
 }
-    
+
 
 #pragma mark Publisher Methods
 - (void)publishAudio:(CDVInvokedUrlCommand*)command{
@@ -289,7 +289,7 @@
     NSString* sid = [command.arguments objectAtIndex:0];
     NSString *snapshot;
     OTSubscriber * subscriber;
-    
+
     if ([sid isEqualToString:@"TBPublisher"]) {
         if (_publisher.view) {
             snapshot = [self getBase64PNGFromUIView: _publisher.view];
@@ -300,7 +300,7 @@
             snapshot = [self getBase64PNGFromUIView: subscriber.view];
         }
     }
-    
+
     CDVPluginResult* callbackResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                                         messageAsString: snapshot];
     [callbackResult setKeepCallbackAsBool:YES];
