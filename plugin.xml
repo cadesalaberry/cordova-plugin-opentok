@@ -61,7 +61,7 @@
           <source url="https://github.com/CocoaPods/Specs.git"/>
         </config>
         <pods>
-          <pod name="OpenTok" spec="2.15.3" />
+          <pod name="OpenTok" spec="2.18.1" />
         </pods>
       </podspec>
 
