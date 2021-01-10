@@ -168,7 +168,8 @@ class TBSession
   # event listeners
   # todo - other events: connectionCreated, connectionDestroyed, signal?, streamPropertyChanged, signal:type?
   eventReceived: (response) =>
-    @[response.eventType](response.data)
+    handler = @[response.eventType] || @customSignalReceived
+    handler(response.data)
   connectionCreated: (event) =>
     connection = new TBConnection( event.connection )
     connectionEvent = new TBEvent("connectionCreated")
@@ -262,6 +263,13 @@ class TBSession
     streamEvent.from = @connections[event.connectionId]
     @dispatchEvent(streamEvent)
 
+    streamEvent = new TBEvent("signal:#{event.type}")
+    streamEvent.data = event.data
+    streamEvent.from = @connections[event.connectionId]
+    @dispatchEvent(streamEvent)
+    return @
+  customSignalReceived: (event) =>
+    console.log("JS: customSignalReceived", event)
     streamEvent = new TBEvent("signal:#{event.type}")
     streamEvent.data = event.data
     streamEvent.from = @connections[event.connectionId]

@@ -1230,6 +1230,7 @@ OTHelpers.roundFloat = function(value, places) {
     // @return this
     //
     self.dispatchEvent = function(event, defaultAction) {
+      console.log('OTHelpers: dispatching event', event);
       if (!event.type) {
         OTHelpers.error('OTHelpers.Eventing.dispatchEvent: Event has no type');
         OTHelpers.error(event);

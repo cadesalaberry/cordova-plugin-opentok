@@ -761,6 +761,7 @@ TBSession = (function() {
   function TBSession(apiKey, sessionId) {
     this.apiKey = apiKey;
     this.sessionId = sessionId;
+    this.customSignalReceived = __bind(this.customSignalReceived, this);
     this.signalReceived = __bind(this.signalReceived, this);
     this.subscribedToStream = __bind(this.subscribedToStream, this);
     this.streamDestroyed = __bind(this.streamDestroyed, this);
@@ -822,7 +823,9 @@ TBSession = (function() {
   };
 
   TBSession.prototype.eventReceived = function(response) {
-    return this[response.eventType](response.data);
+    var handler;
+    handler = this[response.eventType] || this.customSignalReceived;
+    return handler(response.data);
   };
 
   TBSession.prototype.connectionCreated = function(event) {
@@ -947,6 +950,16 @@ TBSession = (function() {
     streamEvent.data = event.data;
     streamEvent.from = this.connections[event.connectionId];
     this.dispatchEvent(streamEvent);
+    streamEvent = new TBEvent("signal:" + event.type);
+    streamEvent.data = event.data;
+    streamEvent.from = this.connections[event.connectionId];
+    this.dispatchEvent(streamEvent);
+    return this;
+  };
+
+  TBSession.prototype.customSignalReceived = function(event) {
+    var streamEvent;
+    console.log("JS: customSignalReceived", event);
     streamEvent = new TBEvent("signal:" + event.type);
     streamEvent.data = event.data;
     streamEvent.from = this.connections[event.connectionId];
@@ -2448,6 +2461,7 @@ OTHelpers.roundFloat = function(value, places) {
     // @return this
     //
     self.dispatchEvent = function(event, defaultAction) {
+      console.log('OTHelpers: dispatching event', event);
       if (!event.type) {
         OTHelpers.error('OTHelpers.Eventing.dispatchEvent: Event has no type');
         OTHelpers.error(event);
