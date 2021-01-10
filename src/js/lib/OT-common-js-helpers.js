@@ -1231,7 +1231,8 @@ OTHelpers.roundFloat = function(value, places) {
     //
     self.dispatchEvent = function(event, defaultAction) {
       console.log('OTHelpers: dispatching event', event);
-      if (!event.type) {
+      var eventHandlerName = event.eventHandlerName || event.type;
+      if (!eventHandlerName) {
         OTHelpers.error('OTHelpers.Eventing.dispatchEvent: Event has no type');
         OTHelpers.error(event);
 
@@ -1242,12 +1243,12 @@ OTHelpers.roundFloat = function(value, places) {
         event.target = this;
       }
 
-      if (!_events[event.type] || _events[event.type].length === 0) {
+      if (!_events[eventHandlerName] || _events[eventHandlerName].length === 0) {
         executeDefaultAction(defaultAction, [event]);
         return;
       }
 
-      executeListeners(event.type, [event], defaultAction);
+      executeListeners(eventHandlerName, [event], defaultAction);
 
       return this;
     };

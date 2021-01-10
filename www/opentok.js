@@ -761,7 +761,6 @@ TBSession = (function() {
   function TBSession(apiKey, sessionId) {
     this.apiKey = apiKey;
     this.sessionId = sessionId;
-    this.customSignalReceived = __bind(this.customSignalReceived, this);
     this.signalReceived = __bind(this.signalReceived, this);
     this.subscribedToStream = __bind(this.subscribedToStream, this);
     this.streamDestroyed = __bind(this.streamDestroyed, this);
@@ -823,9 +822,7 @@ TBSession = (function() {
   };
 
   TBSession.prototype.eventReceived = function(response) {
-    var handler;
-    handler = this[response.eventType] || this.customSignalReceived;
-    return handler(response.data);
+    return this[response.eventType](response.data);
   };
 
   TBSession.prototype.connectionCreated = function(event) {
@@ -946,21 +943,8 @@ TBSession = (function() {
   TBSession.prototype.signalReceived = function(event) {
     var streamEvent;
     console.log("JS: signalReceived", event);
-    streamEvent = new TBEvent("signal");
-    streamEvent.data = event.data;
-    streamEvent.from = this.connections[event.connectionId];
-    this.dispatchEvent(streamEvent);
     streamEvent = new TBEvent("signal:" + event.type);
-    streamEvent.data = event.data;
-    streamEvent.from = this.connections[event.connectionId];
-    this.dispatchEvent(streamEvent);
-    return this;
-  };
-
-  TBSession.prototype.customSignalReceived = function(event) {
-    var streamEvent;
-    console.log("JS: customSignalReceived", event);
-    streamEvent = new TBEvent("signal:" + event.type);
+    streamEvent.eventHandlerName = "signal";
     streamEvent.data = event.data;
     streamEvent.from = this.connections[event.connectionId];
     this.dispatchEvent(streamEvent);
@@ -2462,7 +2446,8 @@ OTHelpers.roundFloat = function(value, places) {
     //
     self.dispatchEvent = function(event, defaultAction) {
       console.log('OTHelpers: dispatching event', event);
-      if (!event.type) {
+      var eventHandlerName = event.eventHandlerName || event.type;
+      if (!eventHandlerName) {
         OTHelpers.error('OTHelpers.Eventing.dispatchEvent: Event has no type');
         OTHelpers.error(event);
 
@@ -2473,12 +2458,12 @@ OTHelpers.roundFloat = function(value, places) {
         event.target = this;
       }
 
-      if (!_events[event.type] || _events[event.type].length === 0) {
+      if (!_events[eventHandlerName] || _events[eventHandlerName].length === 0) {
         executeDefaultAction(defaultAction, [event]);
         return;
       }
 
-      executeListeners(event.type, [event], defaultAction);
+      executeListeners(eventHandlerName, [event], defaultAction);
 
       return this;
     };
