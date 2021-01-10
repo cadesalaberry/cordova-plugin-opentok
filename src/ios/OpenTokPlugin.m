@@ -240,7 +240,7 @@
     NSString *encodedString = [imageData base64EncodedStringWithOptions:0 ];
     return [NSString stringWithFormat:@"data:image/png;base64,%@",encodedString];
 }
-    
+
 
 #pragma mark Publisher Methods
 - (void)publishAudio:(CDVInvokedUrlCommand*)command{
@@ -289,7 +289,7 @@
     NSString* sid = [command.arguments objectAtIndex:0];
     NSString *snapshot;
     OTSubscriber * subscriber;
-    
+
     if ([sid isEqualToString:@"TBPublisher"]) {
         if (_publisher.view) {
             snapshot = [self getBase64PNGFromUIView: _publisher.view];
@@ -300,7 +300,7 @@
             snapshot = [self getBase64PNGFromUIView: subscriber.view];
         }
     }
-    
+
     CDVPluginResult* callbackResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                                         messageAsString: snapshot];
     [callbackResult setKeepCallbackAsBool:YES];
@@ -442,10 +442,15 @@
 
 // Called by session.unsubscribe(streamId, top, left)
 - (void)signal:(CDVInvokedUrlCommand*)command{
-    NSLog(@"iOS signaling to connectionId %@", [command.arguments objectAtIndex:2]);
-    OTConnection* c = [connectionDictionary objectForKey: [command.arguments objectAtIndex:2]];
+    NSString* signalType = [command.arguments objectAtIndex:0];
+    NSString* signalPayload = [command.arguments objectAtIndex:1];
+    NSString* signalRecipientId = [command.arguments objectAtIndex:2];
+
+    NSLog(@"iOS signaling '%@' to connectionId %@", signalType, signalRecipientId);
+    OTConnection* c = [connectionDictionary objectForKey: signalRecipientId];
+
     NSLog(@"iOS signaling to connection %@", c);
-    [_session signalWithType:[command.arguments objectAtIndex:0] string:[command.arguments objectAtIndex:1] connection:c error:nil];
+    [_session signalWithType:signalType string:signalPayload connection:c error:nil];
 }
 
 
