@@ -25,7 +25,7 @@ class TBSession
     if (connectCompletionCallback?)
       @connectionCompletedCallback = connectCompletionCallback;
       errorCallback = (error) -> connectCompletionCallback(error)
-      successCallback = () -> null
+      successCallback = () -> null # successCallback will be launched by connectionCreated event
     Cordova.exec(@eventReceived, TBError, OTPlugin, "addEvent", ["sessionEvents"] )
     Cordova.exec(successCallback, errorCallback, OTPlugin, "connect", [@token] )
     return
@@ -212,6 +212,7 @@ class TBSession
     @dispatchEvent(sessionEvent)
     return @
   streamCreated: (event) =>
+    console.log('TB.Session streamCreated event recv', event)
     stream = new TBStream( event.stream, @connections[event.stream.connectionId] )
     @streams[ stream.streamId ] = stream
     streamEvent = new TBEvent("streamCreated")

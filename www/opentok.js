@@ -890,6 +890,7 @@ TBSession = (function() {
 
   TBSession.prototype.streamCreated = function(event) {
     var stream, streamEvent;
+    console.log('TB.Session streamCreated event recv', event);
     stream = new TBStream(event.stream, this.connections[event.stream.connectionId]);
     this.streams[stream.streamId] = stream;
     streamEvent = new TBEvent("streamCreated");
