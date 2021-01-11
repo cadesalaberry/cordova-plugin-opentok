@@ -25,6 +25,7 @@ class TBSession
     if (connectCompletionCallback?)
       errorCallback = (error) -> connectCompletionCallback(error)
       successCallback = () -> connectCompletionCallback(null)
+    console.log('TBSession connection...', successCallback, connectCompletionCallback);
     Cordova.exec(@eventReceived, TBError, OTPlugin, "addEvent", ["sessionEvents"] )
     Cordova.exec(successCallback, errorCallback, OTPlugin, "connect", [@token] )
     return

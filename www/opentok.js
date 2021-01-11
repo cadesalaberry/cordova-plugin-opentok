@@ -14,6 +14,65 @@ window.cordovaOT = {
   log: function(message) {
     return pdebug("TB LOG", message);
   },
+  getDevices: function() {
+    return [
+      {
+        deviceId: "FAKEDEVICEID779BA001D1B7A638EB320103F0EF",
+        kind: "audioinput",
+        label: "iPad Micro",
+        groupId: ""
+      }, {
+        deviceId: "FAKEDEVICEID08BADAB2A7D7EB3FEDB0BA373C06",
+        kind: "videoinput",
+        label: "Front Camera",
+        groupId: ""
+      }, {
+        deviceId: "FAKEDEVICEID82EF36372A93FBCFB2CEB8900CEB",
+        kind: "videoinput",
+        label: "Back Camera",
+        groupId: ""
+      }
+    ];
+  },
+  getUserMedia: function() {
+    return Promise.resolve({
+      getVideoTracks: function() {
+        return [
+          {
+            name: 'Fake video track',
+            stop: function() {
+              return true;
+            }
+          }
+        ];
+      },
+      getAudioTracks: function() {
+        return [
+          {
+            name: 'Fake audio track',
+            stop: function() {
+              return true;
+            }
+          }
+        ];
+      },
+      getTracks: function() {
+        return [
+          {
+            name: 'Fake audio track',
+            stop: function() {
+              return true;
+            }
+          }, {
+            name: 'Fake video track',
+            stop: function() {
+              return true;
+            }
+          }
+        ];
+      }
+    });
+  },
   off: function(event, handler) {},
   on: function(event, handler) {
     if (event === "exception") {
@@ -554,6 +613,7 @@ TBSession = (function() {
         return connectCompletionCallback(null);
       };
     }
+    console.log('TBSession connection...', successCallback, connectCompletionCallback);
     Cordova.exec(this.eventReceived, TBError, OTPlugin, "addEvent", ["sessionEvents"]);
     Cordova.exec(successCallback, errorCallback, OTPlugin, "connect", [this.token]);
   };
