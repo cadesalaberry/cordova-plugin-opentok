@@ -22,9 +22,12 @@ class TBSession
     if( typeof(connectCompletionCallback) != "function" and connectCompletionCallback? )
       TB.showError( "Session.connect() takes a token and an optional completionHandler" )
       return
+    @connectionCompletedCallback = connectCompletionCallback;
     if (connectCompletionCallback?)
       errorCallback = (error) -> connectCompletionCallback(error)
-      successCallback = () -> connectCompletionCallback(null)
+      successCallback = () ->
+        console.log('TBSession wrong connected callback')
+        connectCompletionCallback(null)
     console.log('TBSession connection...', successCallback, connectCompletionCallback);
     Cordova.exec(@eventReceived, TBError, OTPlugin, "addEvent", ["sessionEvents"] )
     Cordova.exec(successCallback, errorCallback, OTPlugin, "connect", [@token] )
@@ -69,8 +72,9 @@ class TBSession
   subscribe: (one, two, three, four) ->
     @subscriberCallbacks = {}
     if( four? )
+      console.log('Subscribe to stream', one.streamId)
       # stream,domId, properties, completionHandler
-      subscriber = new TBSubscriber(one, two, three)
+      subscriber = new TBSubscriber(one, two, three, four)
       @subscriberCallbacks[one.streamId] = four
       @subscribers[one.streamId] = subscriber
       return subscriber
@@ -171,6 +175,7 @@ class TBSession
   eventReceived: (response) =>
     @[response.eventType](response.data)
   connectionCreated: (event) =>
+    console.log('TBSession connection created event')
     connection = new TBConnection( event.connection )
     connectionEvent = new TBEvent("connectionCreated")
     connectionEvent.connection = connection
@@ -186,6 +191,7 @@ class TBSession
     delete( @connections[ connection.connectionId] )
     return @
   sessionConnected: (event) =>
+    @connectionCompletedCallback?(null)
     @dispatchEvent(new TBEvent("sessionConnected"))
     @connection = new TBConnection( event.connection )
     @connections[event.connection.connectionId] = @connection
