@@ -244,6 +244,8 @@ class TBSession
     @dispatchEvent(streamEvent)
     return @
   subscribedToStream: (event) =>
+    console.log('subscribedToStream', event);
+    console.log('will call', @subscriberCallbacks);
     streamId = event.streamId
     callbackFunc = @subscriberCallbacks[streamId]
     if !callbackFunc?
@@ -256,7 +258,6 @@ class TBSession
       callbackFunc()
       return
   signalReceived: (event) =>
-    console.log("JS: signalReceived", event)
     # streamEvent = new TBEvent("signal")
     # streamEvent.originalEventType = event.type
     # streamEvent.data = event.data

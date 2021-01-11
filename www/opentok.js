@@ -14,65 +14,6 @@ window.cordovaOT = {
   log: function(message) {
     return pdebug("TB LOG", message);
   },
-  getDevices: function() {
-    return [
-      {
-        deviceId: "FAKEDEVICEID779BA001D1B7A638EB320103F0EF",
-        kind: "audioinput",
-        label: "iPad Micro",
-        groupId: ""
-      }, {
-        deviceId: "FAKEDEVICEID08BADAB2A7D7EB3FEDB0BA373C06",
-        kind: "videoinput",
-        label: "Front Camera",
-        groupId: ""
-      }, {
-        deviceId: "FAKEDEVICEID82EF36372A93FBCFB2CEB8900CEB",
-        kind: "videoinput",
-        label: "Back Camera",
-        groupId: ""
-      }
-    ];
-  },
-  getUserMedia: function() {
-    return Promise.resolve({
-      getVideoTracks: function() {
-        return [
-          {
-            name: 'Fake video track',
-            stop: function() {
-              return true;
-            }
-          }
-        ];
-      },
-      getAudioTracks: function() {
-        return [
-          {
-            name: 'Fake audio track',
-            stop: function() {
-              return true;
-            }
-          }
-        ];
-      },
-      getTracks: function() {
-        return [
-          {
-            name: 'Fake audio track',
-            stop: function() {
-              return true;
-            }
-          }, {
-            name: 'Fake video track',
-            stop: function() {
-              return true;
-            }
-          }
-        ];
-      }
-    });
-  },
   off: function(event, handler) {},
   on: function(event, handler) {
     if (event === "exception") {
@@ -927,6 +868,8 @@ TBSession = (function() {
 
   TBSession.prototype.subscribedToStream = function(event) {
     var callbackFunc, error, streamId;
+    console.log('subscribedToStream', event);
+    console.log('will call', this.subscriberCallbacks);
     streamId = event.streamId;
     callbackFunc = this.subscriberCallbacks[streamId];
     if (callbackFunc == null) {
@@ -942,7 +885,6 @@ TBSession = (function() {
 
   TBSession.prototype.signalReceived = function(event) {
     var streamEvent;
-    console.log("JS: signalReceived", event);
     streamEvent = new TBEvent("signal:" + event.type);
     streamEvent.eventHandlerName = "signal";
     streamEvent.data = event.data;
@@ -2445,7 +2387,6 @@ OTHelpers.roundFloat = function(value, places) {
     // @return this
     //
     self.dispatchEvent = function(event, defaultAction) {
-      console.log('OTHelpers: dispatching event', event);
       var eventHandlerName = event.eventHandlerName || event.type;
       if (!eventHandlerName) {
         OTHelpers.error('OTHelpers.Eventing.dispatchEvent: Event has no type');
