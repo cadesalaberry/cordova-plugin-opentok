@@ -1227,7 +1227,9 @@ OTHelpers.roundFloat = function(value, places) {
     // @return this
     //
     self.dispatchEvent = function(event, defaultAction) {
-      if (!event.type) {
+      var eventHandlerName = event.eventHandlerName || event.type;
+
+      if (!eventHandlerName) {
         OTHelpers.error('OTHelpers.Eventing.dispatchEvent: Event has no type');
         OTHelpers.error(event);
 
@@ -1238,12 +1240,12 @@ OTHelpers.roundFloat = function(value, places) {
         event.target = this;
       }
 
-      if (!_events[event.type] || _events[event.type].length === 0) {
+      if (!_events[eventHandlerName] || _events[eventHandlerName].length === 0) {
         executeDefaultAction(defaultAction, [event]);
         return;
       }
 
-      executeListeners(event.type, [event], defaultAction);
+      executeListeners(eventHandlerName, [event], defaultAction);
 
       return this;
     };
@@ -1675,7 +1677,7 @@ OTHelpers.roundFloat = function(value, places) {
     };
 
   };
-  
+
 })(window, window.OTHelpers);
 
 /*jshint browser:true, smarttabs:true*/
@@ -1889,7 +1891,7 @@ OTHelpers.observeStyleChanges = function(element, stylesToObserve, onChange) {
 
             OTHelpers.forEach(stylesToObserve, function(style) {
                 if(isHidden && (style == 'width' || style == 'height')) return;
-                
+
                 var newValue = getStyle(style);
 
                 if (newValue !== oldStyles[style]) {
@@ -2031,7 +2033,7 @@ OTHelpers.observeNodeOrChildNodeRemoval = function(element, onChange) {
     };
 
     document.body.appendChild(domElement);
-    
+
     if(OTHelpers.browserVersion().iframeNeedsLoad) {
       OTHelpers.on(domElement, 'load', wrappedCallback);
     } else {
@@ -2048,11 +2050,11 @@ OTHelpers.observeNodeOrChildNodeRemoval = function(element, onChange) {
     this.element = domElement;
 
   };
-  
+
 })(window, window.OTHelpers);
 
 /*
- * getComputedStyle from 
+ * getComputedStyle from
  * https://github.com/jonathantneal/Polyfills-for-IE8/blob/master/getComputedStyle.js
 
 // tb_require('../helpers.js')
@@ -2322,7 +2324,7 @@ OTHelpers.centerElement = function(element, width, height) {
       }
 
       if (!defaultDisplays[element.ownerDocument]) defaultDisplays[element.ownerDocument] = {};
-    
+
       // We need to know what display value to use for this node. The easiest way
       // is to actually create a node and read it out.
       var testNode = element.ownerDocument.createElement(element.nodeName),
