@@ -320,6 +320,7 @@ TBUpdateObjects = function() {
 TBGenerateDomHelper = function() {
   var div, domId;
   domId = "PubSub" + Date.now();
+  console.log('TBGenerateDomHelper', domId);
   div = document.createElement('div');
   div.setAttribute('id', domId);
   document.body.appendChild(div);
@@ -605,17 +606,15 @@ TBSession = (function() {
       TB.showError("Session.connect() takes a token and an optional completionHandler");
       return;
     }
-    this.connectionCompletedCallback = connectCompletionCallback;
     if ((connectCompletionCallback != null)) {
+      this.connectionCompletedCallback = connectCompletionCallback;
       errorCallback = function(error) {
         return connectCompletionCallback(error);
       };
       successCallback = function() {
-        console.log('TBSession wrong connected callback');
-        return connectCompletionCallback(null);
+        return null;
       };
     }
-    console.log('TBSession connection...', successCallback, connectCompletionCallback);
     Cordova.exec(this.eventReceived, TBError, OTPlugin, "addEvent", ["sessionEvents"]);
     Cordova.exec(successCallback, errorCallback, OTPlugin, "connect", [this.token]);
   };
@@ -678,6 +677,7 @@ TBSession = (function() {
 
   TBSession.prototype.subscribe = function(one, two, three, four) {
     var domId, subscriber;
+    console.log('TBSession.Subscribe', one, two, three, four);
     this.subscriberCallbacks = {};
     if ((four != null)) {
       console.log('Subscribe to stream', one.streamId);
@@ -831,7 +831,9 @@ TBSession = (function() {
 
   TBSession.prototype.connectionCreated = function(event) {
     var connection, connectionEvent;
-    console.log('TBSession connection created event');
+    if (this.connectionCompletedCallback) {
+      this.connectionCompletedCallback();
+    }
     connection = new TBConnection(event.connection);
     connectionEvent = new TBEvent("connectionCreated");
     connectionEvent.connection = connection;
@@ -1088,6 +1090,7 @@ TBSubscriber = (function() {
     } else {
       this.id = divObject;
       this.element = document.getElementById(divObject);
+      console.log('subscriber id', divObject, this.element);
     }
     this.streamId = stream.streamId;
     this.stream = stream;

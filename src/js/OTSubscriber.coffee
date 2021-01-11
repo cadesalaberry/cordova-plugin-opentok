@@ -50,6 +50,7 @@ class TBSubscriber
     else
       @id = divObject
       @element = document.getElementById(divObject)
+      console.log('subscriber id', divObject, @element)
 
     @streamId = stream.streamId
     @stream = stream
