@@ -320,6 +320,7 @@ TBUpdateObjects = function() {
 TBGenerateDomHelper = function() {
   var div, domId;
   domId = "PubSub" + Date.now();
+  console.log('TBGenerateDomHelper', domId);
   div = document.createElement('div');
   div.setAttribute('id', domId);
   document.body.appendChild(div);
@@ -572,6 +573,7 @@ TBPublisher = (function() {
     if (!this.domId && this.pubElement) {
       this.domId = "PubSub" + Date.now();
       this.pubElement.setAttribute('id', this.domId);
+      this.pubElement.setAttribute('playsinline', true);
     }
     if (this.domId && this.pubElement) {
       if (!this.properties.width || !this.properties.height) {
@@ -606,11 +608,12 @@ TBSession = (function() {
       return;
     }
     if ((connectCompletionCallback != null)) {
+      this.connectionCompletedCallback = connectCompletionCallback;
       errorCallback = function(error) {
         return connectCompletionCallback(error);
       };
       successCallback = function() {
-        return connectCompletionCallback(null);
+        return null;
       };
     }
     Cordova.exec(this.eventReceived, TBError, OTPlugin, "addEvent", ["sessionEvents"]);
@@ -675,8 +678,10 @@ TBSession = (function() {
 
   TBSession.prototype.subscribe = function(one, two, three, four) {
     var domId, subscriber;
+    console.log('TBSession.Subscribe', one, two, three, four);
     this.subscriberCallbacks = {};
     if ((four != null)) {
+      console.log('Subscribe to stream', one.streamId);
       subscriber = new TBSubscriber(one, two, three);
       this.subscriberCallbacks[one.streamId] = four;
       this.subscribers[one.streamId] = subscriber;
@@ -847,6 +852,9 @@ TBSession = (function() {
   };
 
   TBSession.prototype.sessionConnected = function(event) {
+    if (typeof this.connectionCompletedCallback === "function") {
+      this.connectionCompletedCallback(null);
+    }
     this.dispatchEvent(new TBEvent("sessionConnected"));
     this.connection = new TBConnection(event.connection);
     this.connections[event.connection.connectionId] = this.connection;
@@ -880,6 +888,7 @@ TBSession = (function() {
 
   TBSession.prototype.streamCreated = function(event) {
     var stream, streamEvent;
+    console.log('TB.Session streamCreated event recv', event);
     stream = new TBStream(event.stream, this.connections[event.stream.connectionId]);
     this.streams[stream.streamId] = stream;
     streamEvent = new TBEvent("streamCreated");
@@ -942,7 +951,6 @@ TBSession = (function() {
 
   TBSession.prototype.signalReceived = function(event) {
     var streamEvent;
-    console.log("JS: signalReceived", event);
     streamEvent = new TBEvent("signal:" + event.type);
     streamEvent.eventHandlerName = "signal";
     streamEvent.data = event.data;
@@ -1079,6 +1087,7 @@ TBSubscriber = (function() {
     } else {
       this.id = divObject;
       this.element = document.getElementById(divObject);
+      console.log('subscriber id', divObject, this.element);
     }
     this.streamId = stream.streamId;
     this.stream = stream;
@@ -1117,6 +1126,7 @@ TBSubscriber = (function() {
     });
     position = getPosition(this.element);
     ratios = TBGetScreenRatios();
+    TBUpdateObjects();
     cordovaOT.getHelper().eventing(this);
     Cordova.exec(TBSuccess, TBError, OTPlugin, "subscribe", [stream.streamId, position.top, position.left, width, height, zIndex, subscribeToAudio, subscribeToVideo, ratios.widthRatio, ratios.heightRatio]);
     Cordova.exec(this.eventReceived, TBSuccess, OTPlugin, "addEvent", ["subscriberEvents"]);
@@ -2445,7 +2455,6 @@ OTHelpers.roundFloat = function(value, places) {
     // @return this
     //
     self.dispatchEvent = function(event, defaultAction) {
-      console.log('OTHelpers: dispatching event', event);
       var eventHandlerName = event.eventHandlerName || event.type;
       if (!eventHandlerName) {
         OTHelpers.error('OTHelpers.Eventing.dispatchEvent: Event has no type');

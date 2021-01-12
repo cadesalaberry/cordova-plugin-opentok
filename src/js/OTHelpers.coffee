@@ -91,6 +91,7 @@ TBUpdateObjects = ()->
   return
 TBGenerateDomHelper = ->
   domId = "PubSub" + Date.now()
+  console.log('TBGenerateDomHelper', domId);
   div = document.createElement('div')
   div.setAttribute( 'id', domId )
   document.body.appendChild(div)

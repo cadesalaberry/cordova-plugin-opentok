@@ -23,8 +23,9 @@ class TBSession
       TB.showError( "Session.connect() takes a token and an optional completionHandler" )
       return
     if (connectCompletionCallback?)
+      @connectionCompletedCallback = connectCompletionCallback;
       errorCallback = (error) -> connectCompletionCallback(error)
-      successCallback = () -> connectCompletionCallback(null)
+      successCallback = () -> null # successCallback will be launched by connectionCreated event
     Cordova.exec(@eventReceived, TBError, OTPlugin, "addEvent", ["sessionEvents"] )
     Cordova.exec(successCallback, errorCallback, OTPlugin, "connect", [@token] )
     return
@@ -66,8 +67,10 @@ class TBSession
     Cordova.exec(TBSuccess, TBError, OTPlugin, "signal", [type, data, to] )
     return @
   subscribe: (one, two, three, four) ->
+    console.log('TBSession.Subscribe', one, two, three, four);
     @subscriberCallbacks = {}
     if( four? )
+      console.log('Subscribe to stream', one.streamId)
       # stream,domId, properties, completionHandler
       subscriber = new TBSubscriber(one, two, three)
       @subscriberCallbacks[one.streamId] = four
@@ -185,6 +188,7 @@ class TBSession
     delete( @connections[ connection.connectionId] )
     return @
   sessionConnected: (event) =>
+    @connectionCompletedCallback?(null)
     @dispatchEvent(new TBEvent("sessionConnected"))
     @connection = new TBConnection( event.connection )
     @connections[event.connection.connectionId] = @connection
@@ -206,6 +210,7 @@ class TBSession
     @dispatchEvent(sessionEvent)
     return @
   streamCreated: (event) =>
+    console.log('TB.Session streamCreated event recv', event)
     stream = new TBStream( event.stream, @connections[event.stream.connectionId] )
     @streams[ stream.streamId ] = stream
     streamEvent = new TBEvent("streamCreated")
@@ -256,7 +261,6 @@ class TBSession
       callbackFunc()
       return
   signalReceived: (event) =>
-    console.log("JS: signalReceived", event)
     # streamEvent = new TBEvent("signal")
     # streamEvent.originalEventType = event.type
     # streamEvent.data = event.data

@@ -767,13 +767,14 @@
     }
 }
 - (void)triggerStreamEvent: (OTStream*) stream withEventType: (NSString*) eventType subEvent: (NSString*) subEvent{
+    NSLog(@"iOS trigger Stream Event: %@[%@] on stream %@", eventType, subEvent, stream);
     NSMutableDictionary* data = [[NSMutableDictionary alloc] init];
     NSMutableDictionary* streamData = [self createDataFromStream: stream];
     [data setObject: streamData forKey: @"stream"];
     [self triggerJSEvent: eventType withType: subEvent withData: data];
 }
 - (NSMutableDictionary*)createDataFromConnection:(OTConnection*)connection{
-    NSLog(@"iOS creating data from stream: %@", connection);
+    NSLog(@"iOS creating data from connection: %@", connection);
     NSMutableDictionary* connectionData = [[NSMutableDictionary alloc] init];
     [connectionData setObject: connection.connectionId forKey: @"connectionId" ];
     [connectionData setObject: [NSString stringWithFormat:@"%.0f", [connection.creationTime timeIntervalSince1970]] forKey: @"creationTime" ];
