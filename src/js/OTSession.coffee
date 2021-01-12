@@ -72,7 +72,7 @@ class TBSession
     if( four? )
       console.log('Subscribe to stream', one.streamId)
       # stream,domId, properties, completionHandler
-      subscriber = new TBSubscriber(one, two, three, four)
+      subscriber = new TBSubscriber(one, two, three)
       @subscriberCallbacks[one.streamId] = four
       @subscribers[one.streamId] = subscriber
       return subscriber
@@ -173,8 +173,6 @@ class TBSession
   eventReceived: (response) =>
     @[response.eventType](response.data)
   connectionCreated: (event) =>
-    if (@connectionCompletedCallback)
-      @connectionCompletedCallback()
     connection = new TBConnection( event.connection )
     connectionEvent = new TBEvent("connectionCreated")
     connectionEvent.connection = connection
@@ -251,8 +249,6 @@ class TBSession
     @dispatchEvent(streamEvent)
     return @
   subscribedToStream: (event) =>
-    console.log('subscribedToStream', event);
-    console.log('will call', @subscriberCallbacks);
     streamId = event.streamId
     callbackFunc = @subscriberCallbacks[streamId]
     if !callbackFunc?

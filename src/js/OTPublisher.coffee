@@ -145,6 +145,7 @@ class TBPublisher
     if (!@domId and @pubElement)
       @domId = "PubSub" + Date.now();
       @pubElement.setAttribute('id', @domId)
+      @pubElement.setAttribute('playsinline', true)
     # if domId exists but properties width or height is not specified, set properties
     if( @domId and @pubElement )
       if !@properties.width or !@properties.height

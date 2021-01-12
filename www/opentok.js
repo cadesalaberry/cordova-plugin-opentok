@@ -573,6 +573,7 @@ TBPublisher = (function() {
     if (!this.domId && this.pubElement) {
       this.domId = "PubSub" + Date.now();
       this.pubElement.setAttribute('id', this.domId);
+      this.pubElement.setAttribute('playsinline', true);
     }
     if (this.domId && this.pubElement) {
       if (!this.properties.width || !this.properties.height) {
@@ -681,7 +682,7 @@ TBSession = (function() {
     this.subscriberCallbacks = {};
     if ((four != null)) {
       console.log('Subscribe to stream', one.streamId);
-      subscriber = new TBSubscriber(one, two, three, four);
+      subscriber = new TBSubscriber(one, two, three);
       this.subscriberCallbacks[one.streamId] = four;
       this.subscribers[one.streamId] = subscriber;
       return subscriber;
@@ -831,9 +832,6 @@ TBSession = (function() {
 
   TBSession.prototype.connectionCreated = function(event) {
     var connection, connectionEvent;
-    if (this.connectionCompletedCallback) {
-      this.connectionCompletedCallback();
-    }
     connection = new TBConnection(event.connection);
     connectionEvent = new TBEvent("connectionCreated");
     connectionEvent.connection = connection;
@@ -938,8 +936,6 @@ TBSession = (function() {
 
   TBSession.prototype.subscribedToStream = function(event) {
     var callbackFunc, error, streamId;
-    console.log('subscribedToStream', event);
-    console.log('will call', this.subscriberCallbacks);
     streamId = event.streamId;
     callbackFunc = this.subscriberCallbacks[streamId];
     if (callbackFunc == null) {
@@ -1074,7 +1070,7 @@ TBSubscriber = (function() {
     return this;
   };
 
-  function TBSubscriber(stream, divObject, properties, callback) {
+  function TBSubscriber(stream, divObject, properties) {
     this.audioLevelUpdated = __bind(this.audioLevelUpdated, this);
     this.videoEnabled = __bind(this.videoEnabled, this);
     this.videoDisabledWarningLifted = __bind(this.videoDisabledWarningLifted, this);
@@ -1084,7 +1080,7 @@ TBSubscriber = (function() {
     this.disconnected = __bind(this.disconnected, this);
     this.connected = __bind(this.connected, this);
     this.eventReceived = __bind(this.eventReceived, this);
-    var divPosition, errorCallback, height, insertMode, name, obj, position, ratios, subscribeToAudio, subscribeToVideo, successCallback, width, zIndex, _ref, _ref1;
+    var divPosition, height, insertMode, name, obj, position, ratios, subscribeToAudio, subscribeToVideo, width, zIndex, _ref, _ref1;
     if (divObject instanceof Element) {
       this.element = divObject;
       this.id = this.element.id;
@@ -1130,25 +1126,9 @@ TBSubscriber = (function() {
     });
     position = getPosition(this.element);
     ratios = TBGetScreenRatios();
+    TBUpdateObjects();
     cordovaOT.getHelper().eventing(this);
-    if ((callback != null)) {
-      successCallback = function() {
-        console.log('TBSubscriber callback success');
-        if (callback) {
-          return callback(null);
-        } else {
-          return TBSuccess();
-        }
-      };
-      errorCallback = function(error) {
-        if (callback) {
-          return callback(error);
-        } else {
-          return TBError(error);
-        }
-      };
-    }
-    Cordova.exec(successCallback, errorCallback, OTPlugin, "subscribe", [stream.streamId, position.top, position.left, width, height, zIndex, subscribeToAudio, subscribeToVideo, ratios.widthRatio, ratios.heightRatio]);
+    Cordova.exec(TBSuccess, TBError, OTPlugin, "subscribe", [stream.streamId, position.top, position.left, width, height, zIndex, subscribeToAudio, subscribeToVideo, ratios.widthRatio, ratios.heightRatio]);
     Cordova.exec(this.eventReceived, TBSuccess, OTPlugin, "addEvent", ["subscriberEvents"]);
     cordovaOT.updateViews();
   }

@@ -767,7 +767,7 @@
     }
 }
 - (void)triggerStreamEvent: (OTStream*) stream withEventType: (NSString*) eventType subEvent: (NSString*) subEvent{
-    NSLog(@"iOS trigger Stream Event: %@, %@ on string %@", eventType, subEvent, stream);
+    NSLog(@"iOS trigger Stream Event: %@[%@] on stream %@", eventType, subEvent, stream);
     NSMutableDictionary* data = [[NSMutableDictionary alloc] init];
     NSMutableDictionary* streamData = [self createDataFromStream: stream];
     [data setObject: streamData forKey: @"stream"];
