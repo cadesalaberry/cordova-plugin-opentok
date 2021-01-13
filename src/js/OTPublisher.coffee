@@ -17,7 +17,7 @@
 class TBPublisher
   constructor: (one, two, callback) ->
     @sanitizeInputs(one, two)
-    pdebug "creating publisher", {}
+    pdebug "creating publisher", one, two
     position = getPosition(@pubElement)
     name=""
     publishAudio="true"
@@ -93,7 +93,8 @@ class TBPublisher
     if (@properties.insertMode is 'replace')
       @pubElement.parentNode.removeChild(@pubElement)
     if (@properties.insertMode is 'append')
-      @pubElement.removeChild(@pubElement.lastChild)
+      insertedPublisher = @pubElement.getElementsByClassName('OT_root')[0];
+      @pubElement.removeChild(insertedPublisher)
     @pubElement = false
 
   destroy: ->

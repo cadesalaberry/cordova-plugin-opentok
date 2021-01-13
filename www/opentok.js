@@ -388,7 +388,7 @@ TBPublisher = (function() {
     this.setSession = __bind(this.setSession, this);
     var audioBitrate, audioFallbackEnabled, audioSource, cameraName, frameRate, height, insertMode, name, onError, onSuccess, position, publishAudio, publishVideo, ratios, resolution, videoSource, width, zIndex, _ref, _ref1, _ref10, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
     this.sanitizeInputs(one, two);
-    pdebug("creating publisher", {});
+    pdebug("creating publisher", one, two);
     position = getPosition(this.pubElement);
     name = "";
     publishAudio = "true";
@@ -484,11 +484,13 @@ TBPublisher = (function() {
   };
 
   TBPublisher.prototype.removePublisherElement = function() {
+    var insertedPublisher;
     if (this.properties.insertMode === 'replace') {
       this.pubElement.parentNode.removeChild(this.pubElement);
     }
     if (this.properties.insertMode === 'append') {
-      this.pubElement.removeChild(this.pubElement.lastChild);
+      insertedPublisher = this.pubElement.getElementsByClassName('OT_root')[0];
+      this.pubElement.removeChild(insertedPublisher);
     }
     return this.pubElement = false;
   };
