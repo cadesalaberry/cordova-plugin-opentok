@@ -492,7 +492,12 @@ TBPublisher = (function() {
   };
 
   TBPublisher.prototype.removePublisherElement = function() {
-    this.pubElement.parentNode.removeChild(this.pubElement);
+    if (this.properties.insertMode === 'replace') {
+      this.pubElement.parentNode.removeChild(this.pubElement);
+    }
+    if (this.properties.insertMode === 'append') {
+      this.pubElement.removeChild(this.pubElement.lastChild);
+    }
     return this.pubElement = false;
   };
 

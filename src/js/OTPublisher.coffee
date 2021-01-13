@@ -91,7 +91,10 @@ class TBPublisher
     return @
 
   removePublisherElement: =>
-    @pubElement.parentNode.removeChild(@pubElement)
+    if (@properties.insertMode is 'replace')
+      @pubElement.parentNode.removeChild(@pubElement)
+    if (@properties.insertMode is 'append')
+      @pubElement.removeChild(@pubElement.lastChild)
     @pubElement = false
 
   destroy: ->
