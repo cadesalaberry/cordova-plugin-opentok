@@ -2,8 +2,8 @@ window.cordovaOT = {
   checkSystemRequirements: function() {
     return 1;
   },
-  initPublisher: function(one, two) {
-    return new TBPublisher(one, two);
+  initPublisher: function(one, two, callback) {
+    return new TBPublisher(one, two, callback);
   },
   initSession: function(apiKey, sessionId) {
     if (sessionId == null) {
@@ -320,7 +320,6 @@ TBUpdateObjects = function() {
 TBGenerateDomHelper = function() {
   var div, domId;
   domId = "PubSub" + Date.now();
-  console.log('TBGenerateDomHelper', domId);
   div = document.createElement('div');
   div.setAttribute('id', domId);
   document.body.appendChild(div);
@@ -381,13 +380,13 @@ var TBPublisher,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 TBPublisher = (function() {
-  function TBPublisher(one, two) {
+  function TBPublisher(one, two, callback) {
     this.removePublisherElement = __bind(this.removePublisherElement, this);
     this.streamDestroyed = __bind(this.streamDestroyed, this);
     this.streamCreated = __bind(this.streamCreated, this);
     this.eventReceived = __bind(this.eventReceived, this);
     this.setSession = __bind(this.setSession, this);
-    var audioBitrate, audioFallbackEnabled, audioSource, cameraName, frameRate, height, insertMode, name, position, publishAudio, publishVideo, ratios, resolution, videoSource, width, zIndex, _ref, _ref1, _ref10, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+    var audioBitrate, audioFallbackEnabled, audioSource, cameraName, frameRate, height, insertMode, name, onError, onSuccess, position, publishAudio, publishVideo, ratios, resolution, videoSource, width, zIndex, _ref, _ref1, _ref10, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
     this.sanitizeInputs(one, two);
     pdebug("creating publisher", {});
     position = getPosition(this.pubElement);
@@ -444,7 +443,17 @@ TBPublisher = (function() {
     position = getPosition(this.pubElement);
     TBUpdateObjects();
     cordovaOT.getHelper().eventing(this);
-    Cordova.exec(TBSuccess, TBError, OTPlugin, "initPublisher", [name, position.top, position.left, width, height, zIndex, publishAudio, publishVideo, cameraName, ratios.widthRatio, ratios.heightRatio, audioFallbackEnabled, audioBitrate, audioSource, videoSource, frameRate, resolution]);
+    onSuccess = function(result) {
+      callback(result);
+      return TBSuccess(result);
+    };
+    onError = function(result) {
+      if (typeof callback === "function") {
+        callback(result);
+      }
+      return TBError(result);
+    };
+    Cordova.exec(onSuccess, onError, OTPlugin, "initPublisher", [name, position.top, position.left, width, height, zIndex, publishAudio, publishVideo, cameraName, ratios.widthRatio, ratios.heightRatio, audioFallbackEnabled, audioBitrate, audioSource, videoSource, frameRate, resolution]);
     Cordova.exec(this.eventReceived, TBSuccess, OTPlugin, "addEvent", ["publisherEvents"]);
   }
 
@@ -573,7 +582,6 @@ TBPublisher = (function() {
     if (!this.domId && this.pubElement) {
       this.domId = "PubSub" + Date.now();
       this.pubElement.setAttribute('id', this.domId);
-      this.pubElement.setAttribute('playsinline', true);
     }
     if (this.domId && this.pubElement) {
       if (!this.properties.width || !this.properties.height) {
@@ -678,10 +686,8 @@ TBSession = (function() {
 
   TBSession.prototype.subscribe = function(one, two, three, four) {
     var domId, subscriber;
-    console.log('TBSession.Subscribe', one, two, three, four);
     this.subscriberCallbacks = {};
     if ((four != null)) {
-      console.log('Subscribe to stream', one.streamId);
       subscriber = new TBSubscriber(one, two, three);
       this.subscriberCallbacks[one.streamId] = four;
       this.subscribers[one.streamId] = subscriber;
@@ -888,7 +894,6 @@ TBSession = (function() {
 
   TBSession.prototype.streamCreated = function(event) {
     var stream, streamEvent;
-    console.log('TB.Session streamCreated event recv', event);
     stream = new TBStream(event.stream, this.connections[event.stream.connectionId]);
     this.streams[stream.streamId] = stream;
     streamEvent = new TBEvent("streamCreated");
@@ -1087,7 +1092,6 @@ TBSubscriber = (function() {
     } else {
       this.id = divObject;
       this.element = document.getElementById(divObject);
-      console.log('subscriber id', divObject, this.element);
     }
     this.streamId = stream.streamId;
     this.stream = stream;
@@ -1126,7 +1130,6 @@ TBSubscriber = (function() {
     });
     position = getPosition(this.element);
     ratios = TBGetScreenRatios();
-    TBUpdateObjects();
     cordovaOT.getHelper().eventing(this);
     Cordova.exec(TBSuccess, TBError, OTPlugin, "subscribe", [stream.streamId, position.top, position.left, width, height, zIndex, subscribeToAudio, subscribeToVideo, ratios.widthRatio, ratios.heightRatio]);
     Cordova.exec(this.eventReceived, TBSuccess, OTPlugin, "addEvent", ["subscriberEvents"]);

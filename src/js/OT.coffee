@@ -13,8 +13,8 @@
 window.cordovaOT =
   checkSystemRequirements: ->
     return 1
-  initPublisher: (one, two) ->
-    return new TBPublisher( one, two )
+  initPublisher: (one, two, callback) ->
+    return new TBPublisher( one, two, callback )
   initSession: (apiKey, sessionId ) ->
     if( not sessionId? ) then @showError( "cordovaOT.initSession takes 2 parameters, your API Key and Session ID" )
     return new TBSession(apiKey, sessionId)

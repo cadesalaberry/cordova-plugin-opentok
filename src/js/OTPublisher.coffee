@@ -15,7 +15,7 @@
 #     setStyle( style, value ) : publisher - not yet implemented
 #
 class TBPublisher
-  constructor: (one, two) ->
+  constructor: (one, two, callback) ->
     @sanitizeInputs(one, two)
     pdebug "creating publisher", {}
     position = getPosition(@pubElement)
@@ -61,7 +61,15 @@ class TBPublisher
     position = getPosition(@pubElement)
     TBUpdateObjects()
     cordovaOT.getHelper().eventing(@)
-    Cordova.exec(TBSuccess, TBError, OTPlugin, "initPublisher", [name, position.top, position.left, width, height, zIndex, publishAudio, publishVideo, cameraName, ratios.widthRatio, ratios.heightRatio, audioFallbackEnabled, audioBitrate, audioSource, videoSource, frameRate, resolution] )
+
+    onSuccess = (result) ->
+      callback(result);
+      return TBSuccess(result);
+    onError = (result) ->
+      callback?(result);
+      return TBError(result);
+
+    Cordova.exec(onSuccess, onError, OTPlugin, "initPublisher", [name, position.top, position.left, width, height, zIndex, publishAudio, publishVideo, cameraName, ratios.widthRatio, ratios.heightRatio, audioFallbackEnabled, audioBitrate, audioSource, videoSource, frameRate, resolution] )
     Cordova.exec(@eventReceived, TBSuccess, OTPlugin, "addEvent", ["publisherEvents"] )
   setSession: (session) =>
     @session = session
@@ -145,7 +153,6 @@ class TBPublisher
     if (!@domId and @pubElement)
       @domId = "PubSub" + Date.now();
       @pubElement.setAttribute('id', @domId)
-      @pubElement.setAttribute('playsinline', true)
     # if domId exists but properties width or height is not specified, set properties
     if( @domId and @pubElement )
       if !@properties.width or !@properties.height

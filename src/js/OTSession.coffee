@@ -67,10 +67,8 @@ class TBSession
     Cordova.exec(TBSuccess, TBError, OTPlugin, "signal", [type, data, to] )
     return @
   subscribe: (one, two, three, four) ->
-    console.log('TBSession.Subscribe', one, two, three, four);
     @subscriberCallbacks = {}
     if( four? )
-      console.log('Subscribe to stream', one.streamId)
       # stream,domId, properties, completionHandler
       subscriber = new TBSubscriber(one, two, three)
       @subscriberCallbacks[one.streamId] = four
@@ -210,7 +208,6 @@ class TBSession
     @dispatchEvent(sessionEvent)
     return @
   streamCreated: (event) =>
-    console.log('TB.Session streamCreated event recv', event)
     stream = new TBStream( event.stream, @connections[event.stream.connectionId] )
     @streams[ stream.streamId ] = stream
     streamEvent = new TBEvent("streamCreated")
