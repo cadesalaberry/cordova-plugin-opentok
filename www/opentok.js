@@ -234,17 +234,10 @@ getPosition = function(pubDiv) {
   height = pubDiv.offsetHeight;
   curtop = pubDiv.offsetTop;
   curleft = pubDiv.offsetLeft;
-  console.log('getPosition for', pubDiv);
   while ((pubDiv = pubDiv.offsetParent)) {
     curleft += pubDiv.offsetLeft;
     curtop += pubDiv.offsetTop;
   }
-  console.log({
-    top: curtop,
-    left: curleft,
-    width: width,
-    height: height
-  });
   return {
     top: curtop,
     left: curleft,
@@ -394,7 +387,6 @@ TBPublisher = (function() {
     this.eventReceived = __bind(this.eventReceived, this);
     this.setSession = __bind(this.setSession, this);
     var audioBitrate, audioFallbackEnabled, audioSource, cameraName, frameRate, height, insertMode, name, onError, onSuccess, position, publishAudio, publishVideo, ratios, resolution, videoSource, width, zIndex, _ref, _ref1, _ref10, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
-    console.log('initPublisher', one, two);
     this.sanitizeInputs(one, two);
     pdebug("creating publisher", {});
     position = getPosition(this.pubElement);
@@ -578,7 +570,6 @@ TBPublisher = (function() {
       } else {
         this.domId = one;
         this.pubElement = document.getElementById(one);
-        console.log('publisherElement found', this.pubElement);
       }
       this.properties = two;
     } else if ((one != null)) {
@@ -594,7 +585,6 @@ TBPublisher = (function() {
     }
     this.properties = this.properties && typeof (this.properties === "object") ? this.properties : {};
     if (!this.domId && this.pubElement) {
-      console.log('generate Publisher element in DOM');
       this.domId = "PubSub" + Date.now();
       this.pubElement.setAttribute('id', this.domId);
     }

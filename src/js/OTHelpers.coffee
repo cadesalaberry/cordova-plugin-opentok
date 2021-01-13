@@ -15,16 +15,9 @@ getPosition = (pubDiv) ->
   height = pubDiv.offsetHeight
   curtop = pubDiv.offsetTop
   curleft = pubDiv.offsetLeft
-  console.log('getPosition for', pubDiv);
   while(pubDiv = pubDiv.offsetParent)
     curleft += pubDiv.offsetLeft
     curtop += pubDiv.offsetTop
-  console.log({
-    top:curtop
-    left:curleft
-    width:width
-    height:height
-  })
   return {
     top:curtop
     left:curleft

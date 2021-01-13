@@ -16,7 +16,6 @@
 #
 class TBPublisher
   constructor: (one, two, callback) ->
-    console.log('initPublisher', one, two)
     @sanitizeInputs(one, two)
     pdebug "creating publisher", {}
     position = getPosition(@pubElement)
@@ -141,7 +140,6 @@ class TBPublisher
       else
         @domId = one
         @pubElement = document.getElementById(one)
-        console.log('publisherElement found', @pubElement)
       @properties = two
     else if( one? )
       # only 1 property is present domId || properties
@@ -156,7 +154,6 @@ class TBPublisher
     @properties = if( @properties and typeof( @properties == "object" )) then @properties else {}
     # if domId does NOT exists and an element is provided, create a unique domId
     if (!@domId and @pubElement)
-      console.log('generate Publisher element in DOM')
       @domId = "PubSub" + Date.now();
       @pubElement.setAttribute('id', @domId)
     # if domId exists but properties width or height is not specified, set properties
