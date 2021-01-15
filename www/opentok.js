@@ -2,8 +2,8 @@ window.cordovaOT = {
   checkSystemRequirements: function() {
     return 1;
   },
-  initPublisher: function(one, two) {
-    return new TBPublisher(one, two);
+  initPublisher: function(one, two, callback) {
+    return new TBPublisher(one, two, callback);
   },
   initSession: function(apiKey, sessionId) {
     if (sessionId == null) {
@@ -381,15 +381,15 @@ var TBPublisher,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 TBPublisher = (function() {
-  function TBPublisher(one, two) {
+  function TBPublisher(one, two, callback) {
     this.removePublisherElement = __bind(this.removePublisherElement, this);
     this.streamDestroyed = __bind(this.streamDestroyed, this);
     this.streamCreated = __bind(this.streamCreated, this);
     this.eventReceived = __bind(this.eventReceived, this);
     this.setSession = __bind(this.setSession, this);
-    var audioBitrate, audioFallbackEnabled, audioSource, cameraName, frameRate, height, insertMode, name, position, publishAudio, publishVideo, ratios, resolution, videoSource, width, zIndex, _ref, _ref1, _ref10, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+    var audioBitrate, audioFallbackEnabled, audioSource, cameraName, frameRate, height, insertMode, name, onError, onSuccess, position, publishAudio, publishVideo, ratios, resolution, videoSource, width, zIndex, _ref, _ref1, _ref10, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
     this.sanitizeInputs(one, two);
-    pdebug("creating publisher", {});
+    pdebug("creating publisher", one, two);
     position = getPosition(this.pubElement);
     name = "";
     publishAudio = "true";
@@ -444,7 +444,17 @@ TBPublisher = (function() {
     position = getPosition(this.pubElement);
     TBUpdateObjects();
     cordovaOT.getHelper().eventing(this);
-    Cordova.exec(TBSuccess, TBError, OTPlugin, "initPublisher", [name, position.top, position.left, width, height, zIndex, publishAudio, publishVideo, cameraName, ratios.widthRatio, ratios.heightRatio, audioFallbackEnabled, audioBitrate, audioSource, videoSource, frameRate, resolution]);
+    onSuccess = function(result) {
+      callback(result);
+      return TBSuccess(result);
+    };
+    onError = function(result) {
+      if (typeof callback === "function") {
+        callback(result);
+      }
+      return TBError(result);
+    };
+    Cordova.exec(onSuccess, onError, OTPlugin, "initPublisher", [name, position.top, position.left, width, height, zIndex, publishAudio, publishVideo, cameraName, ratios.widthRatio, ratios.heightRatio, audioFallbackEnabled, audioBitrate, audioSource, videoSource, frameRate, resolution]);
     Cordova.exec(this.eventReceived, TBSuccess, OTPlugin, "addEvent", ["publisherEvents"]);
   }
 
@@ -475,7 +485,14 @@ TBPublisher = (function() {
   };
 
   TBPublisher.prototype.removePublisherElement = function() {
-    this.pubElement.parentNode.removeChild(this.pubElement);
+    var insertedPublisher;
+    if (this.properties.insertMode === 'replace') {
+      this.pubElement.parentNode.removeChild(this.pubElement);
+    }
+    if (this.properties.insertMode === 'append') {
+      insertedPublisher = this.pubElement.getElementsByClassName('OT_root')[0];
+      this.pubElement.removeChild(insertedPublisher);
+    }
     return this.pubElement = false;
   };
 

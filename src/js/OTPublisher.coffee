@@ -15,9 +15,9 @@
 #     setStyle( style, value ) : publisher - not yet implemented
 #
 class TBPublisher
-  constructor: (one, two) ->
+  constructor: (one, two, callback) ->
     @sanitizeInputs(one, two)
-    pdebug "creating publisher", {}
+    pdebug "creating publisher", one, two
     position = getPosition(@pubElement)
     name=""
     publishAudio="true"
@@ -61,7 +61,15 @@ class TBPublisher
     position = getPosition(@pubElement)
     TBUpdateObjects()
     cordovaOT.getHelper().eventing(@)
-    Cordova.exec(TBSuccess, TBError, OTPlugin, "initPublisher", [name, position.top, position.left, width, height, zIndex, publishAudio, publishVideo, cameraName, ratios.widthRatio, ratios.heightRatio, audioFallbackEnabled, audioBitrate, audioSource, videoSource, frameRate, resolution] )
+
+    onSuccess = (result) ->
+      callback(result);
+      return TBSuccess(result);
+    onError = (result) ->
+      callback?(result);
+      return TBError(result);
+
+    Cordova.exec(onSuccess, onError, OTPlugin, "initPublisher", [name, position.top, position.left, width, height, zIndex, publishAudio, publishVideo, cameraName, ratios.widthRatio, ratios.heightRatio, audioFallbackEnabled, audioBitrate, audioSource, videoSource, frameRate, resolution] )
     Cordova.exec(@eventReceived, TBSuccess, OTPlugin, "addEvent", ["publisherEvents"] )
   setSession: (session) =>
     @session = session
@@ -82,7 +90,11 @@ class TBPublisher
     return @
 
   removePublisherElement: =>
-    @pubElement.parentNode.removeChild(@pubElement)
+    if (@properties.insertMode is 'replace')
+      @pubElement.parentNode.removeChild(@pubElement)
+    if (@properties.insertMode is 'append')
+      insertedPublisher = @pubElement.getElementsByClassName('OT_root')[0];
+      @pubElement.removeChild(insertedPublisher)
     @pubElement = false
 
   destroy: ->
